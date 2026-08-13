@@ -1,0 +1,54 @@
+package vn.devpro.b8_counter;
+
+import android.content.SharedPreferences;
+
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+
+public class CounterViewModel extends ViewModel {
+
+    private static final String PREFS_NAME = "counter_prefs";
+    private static final String KEY_COUNT = "count";
+
+    private final MutableLiveData<Integer> count = new MutableLiveData<>(0);
+
+    public LiveData<Integer> getCount() {
+        return count;
+    }
+
+    // TODO 1: Load count từ SharedPreferences và set vào LiveData
+    public void loadCount(SharedPreferences prefs) {
+        int savedCount = prefs.getInt(KEY_COUNT, 0);
+        count.setValue(savedCount);
+    }
+
+    // TODO 2: Tăng count lên 1 và lưu vào SharedPreferences
+    public void increment(SharedPreferences prefs) {
+        int currentCount = count.getValue() != null ? count.getValue() : 0;
+        int newCount = currentCount + 1;
+
+        count.setValue(newCount);
+        saveCount(prefs, newCount);
+    }
+
+    // TODO 3: Giảm count xuống 1 và lưu vào SharedPreferences, không giảm quá 0
+    public void decrement(SharedPreferences prefs) {
+        int currentCount = count.getValue() != null ? count.getValue() : 0;
+        int newCount = Math.max(0, currentCount - 1);
+
+        count.setValue(newCount);
+        saveCount(prefs, newCount);
+    }
+
+    // TODO 4: Reset to 0 and save it
+    public void reset(SharedPreferences prefs) {
+        count.setValue(0);
+        saveCount(prefs, 0);
+    }
+
+    // Helper method để lưu count vào SharedPreferences
+    private void saveCount(SharedPreferences prefs, int value) {
+        prefs.edit().putInt(KEY_COUNT, value).apply();
+    }
+}
